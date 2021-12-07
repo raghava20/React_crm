@@ -9,10 +9,7 @@ function ServiceRequest() {
 
     console.log(context.data)
     // console.log(context.data)
-    let handleDelete = (e) => {
-        context.data.splice(context.data.indexOf(e), 1)
-        context.setData([...context.data])
-    }
+
     return (
         <div>
             <SideBar />
