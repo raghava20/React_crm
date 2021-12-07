@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     // const formValidationSchema = yup.object({
@@ -13,11 +14,6 @@ function Login() {
     const validateForm = (values) => {
         const errors = {};
         console.log("validate form", values);
-        // if (values.email.length < 3) {
-        //     errors.email = "Please provide correct email"
-        // } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$/i.test(values.email)) {
-        //     errors.email = "Invalid email address"
-        // }
         if (values.username.length < 3) {
             errors.username = "Invalid username"
         }
@@ -37,6 +33,20 @@ function Login() {
         }
 
     });
+    let navigate = useNavigate();
+
+    let handleLogin = () => {
+
+        navigate('/dashboard')
+    }
+    let handleSignUp = () => {
+
+        navigate('/sign-up')
+    }
+    let handleForgot = () => {
+
+        navigate('/forgot-password')
+    }
     return (
         <div class="wrapper">
             <div class="logo"> <img src="https://www.centrahubcrm.com/CentraHub_Favicon.png" alt="" /> </div>
@@ -48,12 +58,12 @@ function Login() {
                         {errors.username && touched.username && errors.username}
                         <TextField type="password" id="password" name="password" label="Password" variant="standard" value={values.password} onChange={handleChange} onBlur={handleBlur} />
                         {errors.password && touched.password && errors.password}
-                        <button type="submit" class="btn mt-3">Login</button>
+                        <button type="submit" class="btn mt-3" onClick={handleLogin}>Login</button>
                     </div>
                 </Box>
             </form>
-            <div class="text-center mt-2"> <a href="#">Forgot password?</a></div>
-            <div class="text-center mt-2"> <a class="sign-up" href="#">Sign Up </a></div>
+            <div class="text-center mt-2"> <a href={handleForgot}>Forgot password?</a></div>
+            <div class="text-center mt-2"> <a class="sign-up" href={handleSignUp}>Sign Up </a></div>
         </div>
     )
 }
