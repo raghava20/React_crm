@@ -62,8 +62,8 @@ function Login() {
                     </div>
                 </Box>
             </form>
-            <div class="text-center mt-2"> <a href={handleForgot}>Forgot password?</a></div>
-            <div class="text-center mt-2"> <a class="sign-up" href={handleSignUp}>Sign Up </a></div>
+            <div class="text-center mt-2"> <a href="#" onClick={handleForgot}>Forgot password?</a></div>
+            <div class="text-center mt-2"> <a class="sign-up" href="#" onClick={handleSignUp}>Sign Up </a></div>
         </div>
     )
 }
