@@ -62,7 +62,6 @@ function Leads() {
 
     //to delete the lead from the database
     let handleDelete = async (id) => {
-        console.log("front end", id)
         await axios.delete(`${API_URL}/leads/` + id, {
             headers: {
                 token: refToken.current                 //adding token in header to process request
@@ -163,7 +162,6 @@ function Leads() {
                             <RadioGroup row name="row-radio-buttons-group" value={currentStatus} onChange={(e) => {
 
                                 setCurrentStatus(e.target.value)
-                                console.log(currentStatus)
                             }}>
                                 <FormControlLabel value="New" control={<Radio />} label="New" />
                                 <FormControlLabel value="Lost" control={<Radio />} label="Lost" />

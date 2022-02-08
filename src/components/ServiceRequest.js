@@ -161,7 +161,6 @@ function ServiceRequest() {
                             <RadioGroup row name="row-radio-buttons-group" value={currentStatus} onChange={(e) => {
 
                                 setCurrentStatus(e.target.value)
-                                console.log(currentStatus)
                             }}>
                                 <FormControlLabel value="Created" control={<Radio />} label="Created" />
                                 <FormControlLabel value="Open" control={<Radio />} label="Open" />

@@ -60,12 +60,11 @@ export default function Settings() {
 
     //function to delete user on database
     const handleDelete = async (id) => {
-        const result = await axios.delete(`${API_URL}/users/` + id, {
+        await axios.delete(`${API_URL}/users/` + id, {
             headers: {
                 token: refToken.current
             }
         })
-        console.log(result)
         getDataFromDb()
     }
 

@@ -15,7 +15,6 @@ function Login() {
     //function to validate the input given by user
     const validateForm = (values) => {
         const errors = {};
-        console.log("validate form", values);
         if (values.email.length < 3) {
             errors.email = "Please provide a valid email"
         }
