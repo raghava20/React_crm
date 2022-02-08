@@ -1,20 +1,18 @@
-import React, { useRef } from 'react'
+import React, { useRef } from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 import * as yup from "yup";
 import { useFormik } from "formik";
 import "../styles/AddLeads.css";
+import { API_URL } from "./API_URL"
 import { ErrorMessage } from "./Utils"
 
-// import { useNavigate } from 'react-router-dom';
-
-function AddLeads({ getDataFromDb }) {
+export default function AddServiceRequest({ getDataFromDb }) {
     let refToken = useRef()
     const localToken = localStorage.getItem("token");
     refToken.current = localToken;
 
     const onSubmit = async (values) => {
-
-        await fetch("http://localhost:9000/leads", {
+        await fetch(`${API_URL}/service-requests`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -23,8 +21,7 @@ function AddLeads({ getDataFromDb }) {
             body: JSON.stringify({
                 name: values.name,
                 email: values.email,
-                contact: values.contact,
-                company: values.company,
+                request: values.request,
                 status: values.status
             })
         }).then(data => data.json())
@@ -32,30 +29,25 @@ function AddLeads({ getDataFromDb }) {
         getDataFromDb()
     }
 
-    // let navigate = useNavigate();
-
     const { handleBlur, handleChange, handleSubmit, errors, touched, values, isValid, resetForm } = useFormik({
         initialValues: {
             name: "",
             email: "",
-            contact: "",
-            company: "",
+            request: "",
             status: "",
         },
         validationSchema: yup.object({
             name: yup.string().required("Please enter name!"),
             email: yup.string().required("Please enter email!").email("Email must be a valid email!"),
-            contact: yup.string().required("Please enter contact no!"),
-            company: yup.string().required("Please enter company name!"),
+            request: yup.string().required("Please enter request!"),
             status: yup.string().required("Please mark status!")
         }),
         onSubmit,
 
     })
-
-    return (
+    return <>
         <div className="addleads-page">
-            <h1>Add Lead</h1>
+            <h1>Add Request</h1>
             <div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -66,29 +58,23 @@ function AddLeads({ getDataFromDb }) {
                     <div class="form-group">
                         <label for="email">Email address</label>
                         <input type="email" class="form-control" placeholder="Enter email" name="email" onChange={handleChange} onBlur={handleBlur} value={values.email} />
-                        {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                     </div>
                     {touched.email && errors.email ? (<ErrorMessage>{errors.email}</ErrorMessage>) : null}
                     <div className="form-group">
-                        <label for="contact">Contact</label>
-                        <input type="text" class="form-control" placeholder="Contact" name="contact" onChange={handleChange} onBlur={handleBlur} value={values.contact} />
+                        <label for="request">Request</label>
+                        <textarea type="text" class="form-control" placeholder="Enter request" name="request" onChange={handleChange} onBlur={handleBlur} value={values.request} />
                     </div>
-                    {touched.contact && errors.contact ? (<ErrorMessage>{errors.contact}</ErrorMessage>) : null}
-                    <div className="form-group">
-                        <label for="company">Company</label>
-                        <input type="text" class="form-control" placeholder="Company" name="company" onChange={handleChange} onBlur={handleBlur} value={values.company} />
-                    </div>
-                    {touched.company && errors.company ? (<ErrorMessage>{errors.company}</ErrorMessage>) : null}
+                    {touched.request && errors.request ? (<ErrorMessage>{errors.request}</ErrorMessage>) : null}
                     <div>
                         <FormControl sx={{ mt: 1, mb: 1, minWidth: 90 }} >
                             <InputLabel id="status-input">Status</InputLabel>
                             <Select labelId="status-input" id="status" label="Status" autoWidth name="status" onChange={handleChange} onBlur={handleBlur} value={values.status} >
-                                <MenuItem id="list1" value="New">New</MenuItem>
-                                <MenuItem id="list2" value="Lost">Lost</MenuItem>
-                                <MenuItem id="list3" value="Contacted">Contacted</MenuItem>
-                                <MenuItem id="list4" value="Canceled">Canceled</MenuItem>
-                                <MenuItem id="list5" value="Qualified">Qualified</MenuItem>
-                                <MenuItem id="list6" value="Confirmed">Confirmed</MenuItem>
+                                <MenuItem id="list11" value="Created">Created</MenuItem>
+                                <MenuItem id="list12" value="Open">Open</MenuItem>
+                                <MenuItem id="list13" value="In process">In process</MenuItem>
+                                <MenuItem id="list14" value="Released">Released</MenuItem>
+                                <MenuItem id="list15" value="Canceled">Canceled</MenuItem>
+                                <MenuItem id="list16" value="Completed">Completed</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -99,7 +85,6 @@ function AddLeads({ getDataFromDb }) {
                 </form>
             </div>
         </div>
-    )
-}
 
-export default AddLeads;
+    </>;
+}
