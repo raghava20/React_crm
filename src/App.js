@@ -15,30 +15,28 @@ export const UserContext = React.createContext("");
 
 function App() {
 
-  return (
-    <Router>
+    return (
+        <Router>
 
-      <Routes>
-        {/* <Route path="*" element={<Login />} /> */}
-        <Route exact path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/reset-password/:id" element={<ResetPassword />} />
-      </Routes>
-      <Routes>
-        <Route element={<SideBar />} />
-      </Routes>
-      <Routes>
-        <Route exact path="/dashboard" element={<DashBoard />} />
-        <Route path="/view-only" element={<DashBoard />} />
-        <Route path="/service-requests" element={<ServiceRequest />} />
-        <Route exact path="/leads" element={<Leads />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
+            <Routes>
+                <Route exact path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/reset-password/:id" element={<ResetPassword />} />
+            </Routes>
+            <Routes>
+                <Route element={<SideBar />} />
+            </Routes>
+            <Routes>
+                <Route exact path="/dashboard" element={<DashBoard />} />
+                <Route path="/service-requests" element={<ServiceRequest />} />
+                <Route exact path="/leads" element={<Leads />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/settings" element={<Settings />} />
+            </Routes>
 
-    </Router>
-  );
+        </Router>
+    );
 }
 
 export default App;

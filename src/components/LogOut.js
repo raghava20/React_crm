@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 
 function LogOut() {
-    const [modelOpen, setModelOpen] = useState(false)
-    let navigate = useNavigate();
+    const [modelOpen, setModelOpen] = useState(false)       //hook to handle log out modal
+    let navigate = useNavigate();                           //hook to change the routes
+
     return (
         <>
             <li>

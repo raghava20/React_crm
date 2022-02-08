@@ -11,31 +11,32 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Leads() {
-    const [data, setData] = useState([])
-    const [currentStatus, setCurrentStatus] = useState("")
-    const [addLead, setAddLead] = useState(true)
-    const [viewLead, setViewLead] = useState(false)
-    const [show, setShow] = useState(false)
-    const [passId, setPassId] = useState("")
-    let decodedRef = useRef()
-    const [checkRoles, setCheckRoles] = useState("")
-    const navigate = useNavigate()
-    let refToken = useRef()
+    const [data, setData] = useState([])                    //hook to save data from database
+    const [currentStatus, setCurrentStatus] = useState("")  //hook to handle the status of the lead
+    const [addLead, setAddLead] = useState(true)            //hook to handle the add lead page
+    const [viewLead, setViewLead] = useState(false)         //hook to handle the view lead page
+    const [show, setShow] = useState(false)                 //hook to handle status modal
+    const [passId, setPassId] = useState("")                //hook to hold current userId for updating status
+    let decodedRef = useRef()                               //hook to decode token to check the user's role
+    const [checkRoles, setCheckRoles] = useState("")        //hook to check role
+    const navigate = useNavigate()                          //hook to changing the routes
+    let refToken = useRef()                                 //hook to save token locally
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
         let decodedToken = jwt.decode(localToken)
-        decodedRef.current = decodedToken.existUser.role
+        decodedRef.current = decodedToken.existUser.role    //assigning user role in a useRef hook
         if (decodedToken.exp * 1000 <= Date.now()) {
             return navigate("/login")
         }
         else {
             refToken.current = localToken;
-            setCheckRoles(decodedRef.current)
+            setCheckRoles(decodedRef.current)               //setting user role
             getDataFromDb()
         }
     }, [])
 
+    //function to get data from database
     const getDataFromDb = async () => {
         await fetch(`${API_URL}/leads`, {
             method: "GET",
@@ -47,30 +48,37 @@ function Leads() {
             .then(data => setData(data))
     }
 
+    //to display view lead button & add lead page
     const handleData = () => {
         setAddLead(false)
         setViewLead(true)
     }
+
+    //to display add lead button & view lead page
     const handleData2 = () => {
         setAddLead(true)
         setViewLead(false)
     }
 
-
+    //to delete the lead from the database
     let handleDelete = async (id) => {
         console.log("front end", id)
         await axios.delete(`${API_URL}/leads/` + id, {
             headers: {
-                token: refToken.current
+                token: refToken.current                 //adding token in header to process request
             }
         })
         getDataFromDb()
     }
+
+    //function to handle status modal
     const handleStatusModal = (status, id) => {
         setCurrentStatus(status)
         setShow(true)
         setPassId(id)
     }
+
+    //function to change status on database
     const changeStatusHandler = async () => {
         await axios.put(`${API_URL}/leads/` + passId,
             {
@@ -78,10 +86,10 @@ function Leads() {
             },
             {
                 headers: {
-                    token: refToken.current
+                    token: refToken.current             //adding token in header to process request
                 }
             })
-        getDataFromDb()
+        getDataFromDb()                                 //calling this function to re-render the data
         setShow(false)
     }
 

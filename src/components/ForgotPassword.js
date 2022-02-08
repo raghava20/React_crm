@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { ErrorMessage, SuccessMessage } from "./Utils.js"
@@ -9,10 +9,10 @@ import { API_URL } from "./API_URL"
 import image from "../images/image.jpg"
 
 function ForgotPassword() {
-    const [error, setError] = useState(null)
+    const [error, setError] = useState(null)        //hook to handle errors from the server
 
+    //function to check email on database
     const onSubmit = async (values) => {
-
         await fetch(`${API_URL}/forgot-password`, {
             method: "PUT",
             headers: {
@@ -25,8 +25,7 @@ function ForgotPassword() {
             .then(data => setError(data.message))
     }
 
-    let navigate = useNavigate();
-
+    //Form validation using Formik package
     const { handleBlur, handleChange, handleSubmit, errors, touched, values, isValid } = useFormik({
         initialValues: {
             email: ""

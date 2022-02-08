@@ -6,46 +6,52 @@ import { API_URL } from "./API_URL"
 import { useNavigate } from "react-router-dom"
 
 function DashBoard() {
-    const [leads, setLeads] = useState(0)
-    const [deals, setDeals] = useState(0)
-    const [requests, setRequests] = useState(0)
-    const [contacts, setContacts] = useState(0)
-    let navigate = useNavigate();
-    let refToken = useRef();
+    const [leads, setLeads] = useState(0)           //hook to save total leads
+    const [deals, setDeals] = useState(0)           //hook to save total deals
+    const [requests, setRequests] = useState(0)     //hook to save total service request
+    const [contacts, setContacts] = useState(0)     //hook to save total contacts
+    let navigate = useNavigate();                   //hook to change the routes
+    let refToken = useRef();                        //hook to save token locally
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
         let decodedToken = jwt.decode(localToken)
-        if (decodedToken.exp * 1000 <= Date.now()) {
+        if (decodedToken.exp * 1000 <= Date.now()) {        //checking token expiration
             return navigate("/login")
         }
         refToken.current = localToken;
         getDataFromDb()
     }, [])
+
+    //function to get data from database
     const getDataFromDb = async () => {
         await fetch(`${API_URL}/leads`, {
             method: "GET",
             headers: {
-                token: refToken.current
+                token: refToken.current                 //adding token in header to process request
             }
-        }).then(data => data.json()).then(data => {
-            let leads = data.reduce((prev, cur) => {
-                return (cur ? prev + 1 : prev)
-            }, 0)
-            let deals = data.filter(data => data.status === "Confirmed").reduce((prev, cur) => {
-                return (cur ? prev + 1 * 3 : prev)
-            }, 0)
-            let contacts = data.filter(data => data.contact !== null).reduce((prev, cur) => {
-                return (cur ? prev + 1 : prev)
-            }, 0)
-            setContacts(contacts)
-            setDeals(deals)
-            setLeads(leads)
         })
+            .then(data => data.json())
+            .then(data => {
+                let leads = data.reduce((prev, cur) => {
+                    return (cur ? prev + 1 : prev)
+                }, 0)
+                let deals = data.filter(data => data.status === "Confirmed").reduce((prev, cur) => {
+                    return (cur ? prev + 1 * 3 : prev)
+                }, 0)
+                let contacts = data.filter(data => data.contact !== null).reduce((prev, cur) => {
+                    return (cur ? prev + 1 : prev)
+                }, 0)
+                setContacts(contacts)
+                setDeals(deals)
+                setLeads(leads)
+            })
+
+        //adding total service request
         await fetch(`${API_URL}/service-requests`, {
             method: 'GET',
             headers: {
-                token: refToken.current
+                token: refToken.current                         //adding token in header to process request
             }
         }).then(data => data.json()).then(data => {
             let request = data.reduce((prev, cur) => {
@@ -54,6 +60,7 @@ function DashBoard() {
             setRequests(request)
         })
     }
+
     return (
         <>
             <SideBar />

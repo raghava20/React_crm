@@ -4,21 +4,20 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import "../styles/AddLeads.css";
 import { ErrorMessage } from "./Utils"
-
-// import { useNavigate } from 'react-router-dom';
+import { API_URL } from "./API_URL"
 
 function AddLeads({ getDataFromDb }) {
-    let refToken = useRef()
-    const localToken = localStorage.getItem("token");
-    refToken.current = localToken;
+    let refToken = useRef()                             //useRef hook to save token in locally
+    const localToken = localStorage.getItem("token");   //getting token from localStorage
+    refToken.current = localToken;                      //assigning token in refToken
 
+    //function to create leads
     const onSubmit = async (values) => {
-
-        await fetch("http://localhost:9000/leads", {
+        await fetch(`${API_URL}/leads`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                token: refToken.current
+                token: refToken.current                 //adding token in header to process request
             },
             body: JSON.stringify({
                 name: values.name,
@@ -28,12 +27,11 @@ function AddLeads({ getDataFromDb }) {
                 status: values.status
             })
         }).then(data => data.json())
-        resetForm();
+        resetForm();                                    // to reset form values after request is done
         getDataFromDb()
     }
 
-    // let navigate = useNavigate();
-
+    //Form validation using formik package
     const { handleBlur, handleChange, handleSubmit, errors, touched, values, isValid, resetForm } = useFormik({
         initialValues: {
             name: "",
@@ -49,8 +47,7 @@ function AddLeads({ getDataFromDb }) {
             company: yup.string().required("Please enter company name!"),
             status: yup.string().required("Please mark status!")
         }),
-        onSubmit,
-
+        onSubmit
     })
 
     return (
@@ -66,7 +63,6 @@ function AddLeads({ getDataFromDb }) {
                     <div class="form-group">
                         <label for="email">Email address</label>
                         <input type="email" class="form-control" placeholder="Enter email" name="email" onChange={handleChange} onBlur={handleBlur} value={values.email} />
-                        {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                     </div>
                     {touched.email && errors.email ? (<ErrorMessage>{errors.email}</ErrorMessage>) : null}
                     <div className="form-group">

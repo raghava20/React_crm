@@ -7,16 +7,17 @@ import { API_URL } from "./API_URL"
 import { ErrorMessage } from "./Utils"
 
 export default function AddServiceRequest({ getDataFromDb }) {
-    let refToken = useRef()
-    const localToken = localStorage.getItem("token");
-    refToken.current = localToken;
+    let refToken = useRef()                             //useRef hook to save token in locally
+    const localToken = localStorage.getItem("token");   //getting token from localStorage
+    refToken.current = localToken;                      //assigning token in refToken
 
+    //function to create service request
     const onSubmit = async (values) => {
         await fetch(`${API_URL}/service-requests`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                token: refToken.current
+                token: refToken.current                 //adding token in header to process request
             },
             body: JSON.stringify({
                 name: values.name,
@@ -25,10 +26,11 @@ export default function AddServiceRequest({ getDataFromDb }) {
                 status: values.status
             })
         }).then(data => data.json())
-        resetForm();
+        resetForm();                                    // to reset form values after request is done
         getDataFromDb()
     }
 
+    //Form validation using Formik package
     const { handleBlur, handleChange, handleSubmit, errors, touched, values, isValid, resetForm } = useFormik({
         initialValues: {
             name: "",
@@ -42,9 +44,9 @@ export default function AddServiceRequest({ getDataFromDb }) {
             request: yup.string().required("Please enter request!"),
             status: yup.string().required("Please mark status!")
         }),
-        onSubmit,
-
+        onSubmit
     })
+
     return <>
         <div className="addleads-page">
             <h1>Add Request</h1>
@@ -55,16 +57,19 @@ export default function AddServiceRequest({ getDataFromDb }) {
                         <input type="text" class="form-control" placeholder="Name" name="name" onChange={handleChange} onBlur={handleBlur} value={values.name} />
                     </div>
                     {touched.name && errors.name ? (<ErrorMessage>{errors.name}</ErrorMessage>) : null}
+
                     <div class="form-group">
                         <label for="email">Email address</label>
                         <input type="email" class="form-control" placeholder="Enter email" name="email" onChange={handleChange} onBlur={handleBlur} value={values.email} />
                     </div>
                     {touched.email && errors.email ? (<ErrorMessage>{errors.email}</ErrorMessage>) : null}
+
                     <div className="form-group">
                         <label for="request">Request</label>
                         <textarea type="text" class="form-control" placeholder="Enter request" name="request" onChange={handleChange} onBlur={handleBlur} value={values.request} />
                     </div>
                     {touched.request && errors.request ? (<ErrorMessage>{errors.request}</ErrorMessage>) : null}
+
                     <div>
                         <FormControl sx={{ mt: 1, mb: 1, minWidth: 90 }} >
                             <InputLabel id="status-input">Status</InputLabel>
@@ -79,6 +84,7 @@ export default function AddServiceRequest({ getDataFromDb }) {
                         </FormControl>
                     </div>
                     {touched.status && errors.status ? (<ErrorMessage>{errors.status}</ErrorMessage>) : null}
+
                     <div>
                         <button className="btn btn-primary addleads-submitbtn" type="submit" disabled={!isValid}>Submit</button>
                     </div>

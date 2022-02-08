@@ -10,76 +10,86 @@ import AddServiceRequest from './AddServiceRequest';
 import { useNavigate } from 'react-router-dom';
 
 function ServiceRequest() {
-    let [data, setData] = useState([])
-    const [currentStatus, setCurrentStatus] = useState("")
-    const [addRequest, setAddRequest] = useState(true)
-    const [viewRequest, setViewRequest] = useState(false)
-    const [show, setShow] = useState(false)
-    const [passId, setPassId] = useState("")
-    let decodedRef = useRef()
-    const [checkRoles, setCheckRoles] = useState("")
-    const navigate = useNavigate()
-    let refToken = useRef()
+    let [data, setData] = useState([])                          //hook to save data from database
+    const [currentStatus, setCurrentStatus] = useState("")      //hook to handle status of the service request
+    const [addRequest, setAddRequest] = useState(true)          //hook to handle add request page
+    const [viewRequest, setViewRequest] = useState(false)       //hook to handle view lead page
+    const [show, setShow] = useState(false)                     //hook to handle status modal
+    const [passId, setPassId] = useState("")                    //hook to hold current userId for updating status
+    let decodedRef = useRef()                                   //hook to save decoded token 
+    const [checkRoles, setCheckRoles] = useState("")            //hook to check the roles
+    const navigate = useNavigate()                              //hook to change the routes           
+    let refToken = useRef()                                     //hook to save token locally
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
-        let decodedToken = jwt.decode(localToken)
+        let decodedToken = jwt.decode(localToken)               //decoding the token
         decodedRef.current = decodedToken.existUser.role
         if (decodedToken.exp * 1000 <= Date.now()) {
             return navigate("/login")
         }
         else {
             setCheckRoles(decodedRef.current)
-            refToken.current = localToken;
+            refToken.current = localToken;                        //assigning token in a useRef hook  
             getDataFromDb()
         }
     }, [])
 
+    //function to get data from database
     const getDataFromDb = async () => {
         await fetch(`${API_URL}/service-requests`, {
             method: "GET",
             headers: {
-                token: refToken.current
+                token: refToken.current                         //adding token in header to process request
             }
         })
             .then(data => data.json())
             .then(data => setData(data))
     }
 
+    //to display the create request button & view request page
     const handleData = () => {
         setAddRequest(false)
         setViewRequest(true)
     }
+
+    //to display the view request button & add request page
     const handleData2 = () => {
         setAddRequest(true)
         setViewRequest(false)
     }
 
+    //function to delete service request on database
     let handleDelete = async (id) => {
         await axios.delete(`${API_URL}/service-requests/` + id, {
             headers: {
-                token: refToken.current
+                token: refToken.current                          //adding token in header to process request
             }
         })
         getDataFromDb()
     }
+
+    //to display the status modal
     const handleStatusModal = (status, id) => {
         setCurrentStatus(status)
         setShow(true)
         setPassId(id)
     }
+
+    //function to update the status on database
     const changeStatusHandler = async () => {
         await axios.put(`${API_URL}/service-requests/` + passId,
             {
                 status: currentStatus,
             }, {
             headers: {
-                token: refToken.current
+                token: refToken.current                           //adding token in header to process request
             }
         })
-        getDataFromDb()
+        getDataFromDb()                                         //calling this function to re-render the data
         setShow(false)
     }
+
     return (
         <>
             <SideBar />
@@ -130,12 +140,15 @@ function ServiceRequest() {
                     </table>
                 </div>
                 : null}
+
             {viewRequest ? <AddServiceRequest getDataFromDb={getDataFromDb} /> : null}
 
-            <Modal show={show} onHide={() => {
-                setCurrentStatus("")
-                setShow(false)
-            }} backdrop="static" keyboard={false}>
+            <Modal show={show}
+                onHide={() => {
+                    setCurrentStatus("")
+                    setShow(false)
+                }} backdrop="static" keyboard={false}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title >
                         Do you want to change status?

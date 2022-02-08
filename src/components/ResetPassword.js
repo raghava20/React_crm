@@ -9,13 +9,13 @@ import { API_URL } from "./API_URL"
 import image from "../images/image.jpg"
 
 function ResetPassword() {
-    const [error, setError] = useState(null)
-    const [show, setShow] = useState(false)         //hook to display sign in button after success message from the database
-    const [disabled, setDisabled] = useState(false)
-    const { id } = useParams()
+    const [error, setError] = useState(null)        //hook to handle error messages from the server
+    const [show, setShow] = useState(false)         //hook to display sign in button after success message from database
+    const [disabled, setDisabled] = useState(false) //hook to disable button after password update
+    const { id } = useParams()                      //hook to get token from the url
 
+    //function to update the password
     const onSubmit = async (values) => {
-
         await fetch(`${API_URL}/reset-password`, {
             method: "PUT",
             headers: {
@@ -23,7 +23,7 @@ function ResetPassword() {
             },
             body: JSON.stringify({
                 newPassword: values.newPassword,
-                resetLink: id
+                resetLink: id                           //passing token as reset link to server
             })
         })
             .then(data => data.json())
@@ -36,7 +36,10 @@ function ResetPassword() {
             })
     }
 
+    //password pattern using regex
     const PASSWORD_REGEX = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
+
+    //Form validation using Formik package
     const { handleBlur, handleChange, handleSubmit, errors, touched, values, isValid } = useFormik({
         initialValues: {
             newPassword: "",
@@ -61,8 +64,8 @@ function ResetPassword() {
             <form onSubmit={handleSubmit}>
                 {error ?
                     (error === "Your password has been changed successfully!" ?
-                        (<SuccessMessage >{error} </SuccessMessage>) :
-                        (<ErrorMessage >{error} </ErrorMessage>))
+                        (<SuccessMessage >{error} </SuccessMessage>)
+                        : (<ErrorMessage >{error} </ErrorMessage>))
                     : ""
                 }
                 <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '34ch', maxWidth: '90%' }, }} noValidate autoComplete="off" >

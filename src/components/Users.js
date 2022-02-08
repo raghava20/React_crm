@@ -9,51 +9,52 @@ import jwt from "jsonwebtoken";
 import { useNavigate } from 'react-router-dom';
 
 export default function Users() {
-    const [data, setData] = useState([])
-    const [show, setShow] = useState(false)
-    const [currentRole, setCurrentRole] = useState("")
-    const [passId, setPassId] = useState("")
-    const navigate = useNavigate()
+    const [data, setData] = useState([]) //hook to save data from database
+    const [show, setShow] = useState(false) //hook to handle role modal    
+    const [currentRole, setCurrentRole] = useState("") //hook to handle the roles    
+    const [passId, setPassId] = useState("") //hook to hold current userId for updating status
+    const navigate = useNavigate() //hook to change the routes
     let decodedRef = useRef()
-    let refToken = useRef()
+    let refToken = useRef() //hook to save token locally
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
-        let decodedToken = jwt.decode(localToken)
+        let decodedToken = jwt.decode(localToken) //decoding the token
         if (decodedToken.exp * 1000 <= Date.now()) {
             return navigate("/login")
-        }
-        else {
-            decodedRef.current = decodedToken.existUser.role
-            refToken.current = localToken;
+        } else {
+            decodedRef.current = decodedToken.existUser.role //assigning user role
+            refToken.current = localToken; //assigning token in a useRef hook
             getDataFromDb()
         }
     }, [])
 
+    //function to get data from database
     const getDataFromDb = async () => {
         await fetch(`${API_URL}/users`, {
             method: "GET",
             headers: {
-                token: refToken.current
+                token: refToken.current //adding token in header to process request
             }
         }).then(data => data.json()).then(data => setData(data))
     }
+
+    //to display the role modal
     const handleRoleModal = (role, id) => {
         setCurrentRole(role)
         setShow(true)
         setPassId(id)
     }
 
+    //function to change role on database
     const changeRoleHandler = async () => {
-        await axios.put(`${API_URL}/users/` + passId,
-            {
-                role: currentRole
-            },
-            {
-                headers: {
-                    token: refToken.current
-                }
-            })
+        await axios.put(`${API_URL}/users/` + passId, {
+            role: currentRole
+        }, {
+            headers: {
+                token: refToken.current //adding token in header to process request
+            }
+        })
         getDataFromDb()
         setShow(false)
     }

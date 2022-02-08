@@ -9,23 +9,24 @@ import jwt from "jsonwebtoken";
 import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
-    const [data, setData] = useState([])
-    const [show, setShow] = useState(false)
-    const [currentRole, setCurrentRole] = useState("")
-    const [passId, setPassId] = useState("")
-    const navigate = useNavigate()
-    let refToken = useRef()
+    const [data, setData] = useState([])                    //hook to save data from database
+    const [show, setShow] = useState(false)                 //hook to handle role modal
+    const [currentRole, setCurrentRole] = useState("")      //hook to handle the roles    
+    const [passId, setPassId] = useState("")                //hook to hold current userId for updating status   
+    const navigate = useNavigate()                          //hook to change the routes
+    let refToken = useRef()                                 //hook to save token locally
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
-        let decodedToken = jwt.decode(localToken)
+        let decodedToken = jwt.decode(localToken)           //decoding the token
         if (decodedToken.exp * 1000 <= Date.now()) {
             return navigate("/login")
         }
-        refToken.current = localToken;
+        refToken.current = localToken;                      //assigning token in a useRef hook
         getDataFromDb()
     }, [])
 
+    //function to get data from database
     const getDataFromDb = async () => {
         await fetch(`${API_URL}/users`, {
             method: "GET",
@@ -34,12 +35,15 @@ export default function Settings() {
             }
         }).then(data => data.json()).then(data => setData(data))
     }
+
+    //to display the role modal
     const handleRoleModal = (role, id) => {
         setCurrentRole(role)
         setShow(true)
         setPassId(id)
     }
 
+    //function to update the user role on database
     const changeRoleHandler = async () => {
         await axios.put(`${API_URL}/users/` + passId,
             {
@@ -53,6 +57,8 @@ export default function Settings() {
         getDataFromDb()
         setShow(false)
     }
+
+    //function to delete user on database
     const handleDelete = async (id) => {
         const result = await axios.delete(`${API_URL}/users/` + id, {
             headers: {
@@ -100,10 +106,13 @@ export default function Settings() {
                 </tbody>
             </table>
         </div>
-        <Modal show={show} onHide={() => {
-            setCurrentRole("")
-            setShow(false)
-        }} backdrop="static" keyboard={false}>
+
+        <Modal show={show}
+            onHide={() => {
+                setCurrentRole("")
+                setShow(false)
+            }} backdrop="static" keyboard={false}
+        >
             <Modal.Header closeButton>
                 <Modal.Title >
                     Do you want to change Role?
@@ -113,9 +122,11 @@ export default function Settings() {
                 <Stack>
                     <FormControl>
                         <FormLabel id="demo-row-radio-buttons-group-label">Role:</FormLabel>
-                        <RadioGroup row name="row-radio-buttons-group" value={currentRole} onChange={(e) => {
-                            setCurrentRole(e.target.value)
-                        }}>
+                        <RadioGroup row name="row-radio-buttons-group" value={currentRole}
+                            onChange={(e) => {
+                                setCurrentRole(e.target.value)
+                            }}
+                        >
                             <FormControlLabel value="Employee" control={<Radio />} label="Employee" />
                             <FormControlLabel value="Manager" control={<Radio />} label="Manager" />
                             <FormControlLabel value="Admin" control={<Radio />} label="Admin" />

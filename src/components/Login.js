@@ -9,9 +9,10 @@ import { API_URL } from "./API_URL"
 import image from "../images/image.jpg"
 
 function Login() {
-    let navigate = useNavigate();
-    let [error, setError] = useState(null)
+    let navigate = useNavigate();               //hook to changing the routes
+    let [error, setError] = useState(null)      //hook to handle error messages from the server
 
+    //function to validate the input given by user
     const validateForm = (values) => {
         const errors = {};
         console.log("validate form", values);
@@ -32,6 +33,8 @@ function Login() {
         }
         return errors;
     }
+
+    //function to check credentials is on the database
     const onSubmit = async (values) => {
         await fetch(`${API_URL}/login`, {
             method: "POST",
@@ -52,11 +55,11 @@ function Login() {
 
     }
 
+    //Form validation using Formik package
     const { handleBlur, handleChange, handleSubmit, values, touched, errors, isValid } = useFormik({
         initialValues: { email: '', password: '' },
         validate: validateForm,
-        onSubmit,
-
+        onSubmit
     });
 
 

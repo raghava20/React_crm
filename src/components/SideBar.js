@@ -6,14 +6,14 @@ import image from "../logo.jpg"
 import jwt from "jsonwebtoken";
 
 function SideBar() {
-    const [showUserPage, setShowUserPage] = useState(false)
-    const [showSettingPage, setShowSettingPage] = useState(false)
-    const decodedRef = useRef()
+    const [showUserPage, setShowUserPage] = useState(false)             //hook to handle user page for manager/admin
+    const [showSettingPage, setShowSettingPage] = useState(false)       //hook to handle setting page for admin
+    const decodedRef = useRef()                                         //hook to save decoded token    
 
     useEffect(() => {
         const localToken = localStorage.getItem("token")
         let decodedToken = jwt.decode(localToken)
-        decodedRef.current = decodedToken.existUser.role
+        decodedRef.current = decodedToken.existUser.role            //assigning user role to useRef hook
         if (decodedRef.current === "Manager" || decodedRef.current === "Admin") {
             setShowUserPage(true)
         }
@@ -22,6 +22,7 @@ function SideBar() {
         }
 
     }, [])
+
     return (
         <>
             <div class="sidebar-container">
