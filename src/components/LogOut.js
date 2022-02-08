@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
 
 function LogOut() {
     const [modelOpen, setModelOpen] = useState(false)
-
+    let navigate = useNavigate();
     return (
-        <div>
+        <>
             <li>
                 <a onClick={setModelOpen}>
-                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i>Log Out
+                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i><span className="sidebar-titles">Log Out</span>
                 </a>
             </li>
             <Modal show={modelOpen} onHide={() => setModelOpen(false)}>
@@ -24,12 +25,16 @@ function LogOut() {
                     <Button variant="secondary" onClick={() => setModelOpen(false)} >
                         NO
                     </Button>
-                    <Button variant="primary" onClick={() => setModelOpen(false)}>
+                    <Button variant="primary" onClick={() => {
+                        localStorage.removeItem('token');
+                        navigate("/login")
+                        setModelOpen(false)
+                    }}>
                         YES
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </>
     )
 }
 

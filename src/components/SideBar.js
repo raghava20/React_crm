@@ -1,44 +1,77 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from "react-router-dom"
 import LogOut from './LogOut'
-import "./SideBar.css"
+import "../styles/SideBar.css"
+import image from "../logo.jpg"
+import jwt from "jsonwebtoken";
 
 function SideBar() {
-    return (
-        <div>
+    const [showUserPage, setShowUserPage] = useState(false)
+    const [showSettingPage, setShowSettingPage] = useState(false)
+    const decodedRef = useRef()
 
+    useEffect(() => {
+        const localToken = localStorage.getItem("token")
+        let decodedToken = jwt.decode(localToken)
+        decodedRef.current = decodedToken.existUser.role
+        if (decodedRef.current === "Manager" || decodedRef.current === "Admin") {
+            setShowUserPage(true)
+        }
+        if (decodedRef.current === "Admin") {
+            setShowSettingPage(true)
+        }
+
+    }, [])
+    return (
+        <>
             <div class="sidebar-container">
                 <div class="sidebar-logo">
-                    CRM
+                    <img className="logo-img" src={image} alt="logo" />
+                    <span className="ms-3 sidebar-titles">CRM</span>
                 </div>
                 <ul class="sidebar-navigation">
 
-                    <Link to="/dashboard">
+                    <li>
+                        <Link to="/dashboard">
+
+                            <i class="fa fa-list" aria-hidden="true"></i> <span className="sidebar-titles"> &nbsp;&nbsp;Dashboard</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/leads">
+
+                            <i class="fa fa-users" aria-hidden="true"></i><span className="sidebar-titles">Leads</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/service-requests">
+
+                            <i class="fa fa-edit" aria-hidden="true"></i><span className="sidebar-titles">Service Requests</span>
+                        </Link>
+                    </li>
+                    {showUserPage ?
                         <li>
-                            <a href="#">
-                                <i class="fas fa-list" aria-hidden="true"></i> &nbsp;&nbsp;Dashboard
-                            </a>
+                            <Link to="/users">
+
+                                <i class="fa fa-users" aria-hidden="true"></i><span className="sidebar-titles">Users</span>
+                            </Link>
                         </li>
-                    </Link>
-                    <Link to="/leads">
+                        : null
+                    }
+                    {showSettingPage ?
                         <li>
-                            <a href="#">
-                                <i class="fa fa-users" aria-hidden="true"></i>Leads
-                            </a>
+                            <Link to="/settings">
+
+                                <i class="fas fa-users-cog" aria-hidden="true"></i><span className="sidebar-titles">&nbsp;&nbsp;Settings</span>
+                            </Link>
                         </li>
-                    </Link>
-                    <Link to="/service-requests">
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-edit" aria-hidden="true"></i>Service Requests
-                            </a>
-                        </li>
-                    </Link>
+                        : null
+                    }
                     <LogOut />
                 </ul>
             </div>
 
-        </div >
+        </ >
     )
 }
 
