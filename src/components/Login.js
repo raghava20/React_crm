@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ErrorMessage } from "./Utils.js"
 import { API_URL } from "./API_URL"
 import image from "../images/image.jpg"
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import MailIcon from '@mui/icons-material/Mail';
 
 function Login() {
     let navigate = useNavigate();               //hook to changing the routes
@@ -81,6 +83,16 @@ function Login() {
             </form>
             <div class="text-center mt-2"> <Link to="/forgot-password">Forgot password?</Link></div>
             <div class="text-center mt-2"> <Link to="/sign-up">Sign Up </Link></div>
+            <small style={{ display: "flex", justifyContent: 'center', alignItems: 'center', marginTop: "10px", color: "#039BE5", flexWrap: "wrap", flexDirection: "column" }}>
+                Demo Credentials:&nbsp;
+                <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', gap: "3px", flexDirection: "column" }}>
+                    <MailIcon fontSize="small" />
+                    employee@gmail.com<br />
+                    manager@gmail.com<br />
+                    admin@gmail.com<br />
+                </div>
+                <LockOpenIcon fontSize="small" />Password!123
+            </small>
         </div>
     )
 }
